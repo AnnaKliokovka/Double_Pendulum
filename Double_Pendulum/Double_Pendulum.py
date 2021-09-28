@@ -1,63 +1,140 @@
-import math
-from sympy import diff, symbols, cos, sin
+# -*- coding: utf-8 -*-
+"""
+author: chris manucredo, chris.manucredo@gmail.com
+about:
+    this is an implementaion of newton's method for solving systems of 
+    non-linear equations. as an example we use two different non-linear
+    systems. at the end you'll see a work-accuracy plot for both systems.
+"""
+import numpy as np
 import matplotlib.pyplot as plt
-theta1, theta2, omega, alpha = symbols('theta1 theta2 omega alpha')
-#Получение частной производной потенциальной энергии от угла тета1
-def DPE_theta1():
-    PotentialEnergy = -2*((3*omega*omega)*cos(theta1)+(omega*omega)*cos(theta2))+\
-                      (4*(81*cos(theta1-theta2)*cos(alpha-theta1)*cos(alpha-theta2)-81*cos(alpha-theta1)*cos(alpha-theta1)- \
-                      36*cos(alpha-theta2)*cos(alpha-theta2)))/(18*cos(theta1-theta2)*cos(theta1-theta2)-32)
-    return diff(PotentialEnergy, theta1)
-#Получение частной производной потенциальной энергии от угла тета2
-def DPE_theta2():
-    PotentialEnergy = -2*((3*omega*omega)*cos(theta1)+(omega*omega)*cos(theta2))+\
-                      (4*(81*cos(theta1-theta2)*cos(alpha-theta1)*cos(alpha-theta2)-81*cos(alpha-theta1)*cos(alpha-theta1)- \
-                      36*cos(alpha-theta2)*cos(alpha-theta2)))/(18*cos(theta1-theta2)*cos(theta1-theta2)-32)
-    return diff(PotentialEnergy, theta2)
-def Phi1(theta1, theta2):
-    return math.asin(((-648*sin(alpha - theta1)*cos(alpha - theta1) + 324*sin(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - \
-        324*sin(theta1 - theta2)*cos(alpha - theta1)*cos(alpha - theta2))/(18*cos(theta1 - theta2)**2 - 32) + 36*(-324*cos(alpha - theta1)**2 + \
-        324*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 144*cos(alpha - theta2)**2)*sin(theta1 - theta2)*cos(theta1 - theta2)/(18*cos(theta1 - theta2)**2 - 32)**2)/(-6*omega**2))
-def Phi2(theta1, theta2):
-    return math.asin(((324*sin(alpha - theta2)*cos(alpha - theta1)*cos(theta1 - theta2) - 288*sin(alpha - theta2)*cos(alpha - theta2) + \
-       324*sin(theta1 - theta2)*cos(alpha - theta1)*cos(alpha - theta2))/(18*cos(theta1 - theta2)**2 - 32) - 36*(-324*cos(alpha - theta1)**2 + \
-      324*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 144*cos(alpha - theta2)**2)*sin(theta1 - theta2)*cos(theta1 - theta2)/(18*cos(theta1 - theta2)**2 - 32)**2)/(-2*omega**2))
+from sympy import diff, symbols, cos, sin
+import math
 
-def equations(p):
-    theta1, theta2 = p
-    return (DPE_theta1(), DPE_theta2())
+def f(theta):
+    DPE_theta1 =6*omega**2*sin(theta[0,0]) + (-648*sin(alpha - theta[0,0])*cos(alpha - theta[0,0]) + 324*sin(alpha - theta[0,0])*cos(alpha - theta[1,0])*cos(theta[0,0] - theta[1,0]) - \
+        324*sin(theta[0,0] - theta[1,0])*cos(alpha - theta[0,0])*cos(alpha - theta[1,0]))/(18*cos(theta[0,0] - theta[1,0])**2 - 32) + 36*(-324*cos(alpha - theta[0,0])**2 + \
+        324*cos(alpha - theta[0,0])*cos(alpha - theta[1,0])*cos(theta[0,0] - theta[1,0]) - 144*cos(alpha - theta[1,0])**2)*sin(theta[0,0] - theta[1,0])*cos(theta[0,0] - theta[1,0])/(18*cos(theta[0,0] - theta[1,0])**2 - 32)**2
+    DPE_theta2 = 2*omega**2*sin(theta[1,0]) + (324*sin(alpha - theta[1,0])*cos(alpha - theta[0,0])*cos(theta[0,0] - theta[1,0]) - 288*sin(alpha - theta[1,0])*cos(alpha - theta[1,0]) + \
+        324*sin(theta[0,0] - theta[1,0])*cos(alpha - theta[0,0])*cos(alpha - theta[1,0]))/(18*cos(theta[0,0] - theta[1,0])**2 - 32) - 36*(-324*cos(alpha - theta[0,0])**2 + \
+        324*cos(alpha - theta[0,0])*cos(alpha - theta[1,0])*cos(theta[0,0] - theta[1,0]) - 144*cos(alpha - theta[1,0])**2)*sin(theta[0,0] - theta[1,0])*cos(theta[0,0] - theta[1,0])/(18*cos(theta[0,0] - theta[1,0])**2 - 32)**2
+    return np.array([[DPE_theta1], [DPE_theta2]],dtype='float64') 
+ 
+#Вторая частная производная потенциальной энергии
+def DPE_theta1_theta1(theta1, theta2):
+    return 6*omega**2*cos(theta1) + (-648*sin(alpha - theta1)**2 - 648*sin(alpha - theta1)*sin(theta1 - theta2)*cos(alpha - theta2) + 648*cos(alpha - theta1)**2 - \
+        648*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2))/(18*cos(theta1 - theta2)**2 - 32) + (-23328*sin(alpha - theta1)*cos(alpha - theta1) + \
+        11664*sin(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 11664*sin(theta1 - theta2)*cos(alpha - theta1)*cos(alpha - theta2))*sin(theta1 - theta2)*cos(theta1 - theta2)/(18*cos(theta1 - theta2)**2 - 32)**2 + \
+        36*(-648*sin(alpha - theta1)*cos(alpha - theta1) + 324*sin(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - \
+        324*sin(theta1 - theta2)*cos(alpha - theta1)*cos(alpha - theta2))*sin(theta1 - theta2)*cos(theta1 - theta2)/(18*cos(theta1 - theta2)**2 - 32)**2 -\
+       (-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*sin(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**2 +\
+      (-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*cos(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**2 + \
+      72*(-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*sin(theta1 - theta2)**2*cos(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**3
+#Вторая частная производная потенциальной энергии
+def DPE_theta1_theta2(theta1, theta2):
+    return (324*sin(alpha - theta1)*sin(alpha - theta2)*cos(theta1 - theta2) + 324*sin(alpha - theta1)*sin(theta1 - theta2)*cos(alpha - theta2) - 324*sin(alpha - theta2)*sin(theta1 - theta2)*cos(alpha - theta1) + \
+        324*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2))/(18*cos(theta1 - theta2)**2 - 32) - 36*(-648*sin(alpha - theta1)*cos(alpha - theta1) + 324*sin(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) -\
+       324*sin(theta1 - theta2)*cos(alpha - theta1)*cos(alpha - theta2))*sin(theta1 - theta2)*cos(theta1 - theta2)/(18*cos(theta1 - theta2)**2 - 32)**2 + (11664*sin(alpha - theta2)*cos(alpha - theta1)*cos(theta1 - theta2) -\
+      10368*sin(alpha - theta2)*cos(alpha - theta2) + 11664*sin(theta1 - theta2)*cos(alpha - theta1)*cos(alpha - theta2))*sin(theta1 - theta2)*cos(theta1 - theta2)/(18*cos(theta1 - theta2)**2 - 32)**2 +\
+     (-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*sin(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**2 -\
+    (-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*cos(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**2 - \
+    72*(-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*sin(theta1 - theta2)**2*cos(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**3
+#Вторая частная производная потенциальной энергии
+def DPE_theta2_theta1(theta1, theta2):
+    return (324*sin(alpha - theta1)*sin(alpha - theta2)*cos(theta1 - theta2) + 324*sin(alpha - theta1)*sin(theta1 - theta2)*cos(alpha - theta2) - 324*sin(alpha - theta2)*sin(theta1 - theta2)*cos(alpha - theta1) +\
+       324*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2))/(18*cos(theta1 - theta2)**2 - 32) - (-23328*sin(alpha - theta1)*cos(alpha - theta1) + 11664*sin(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) -\
+      11664*sin(theta1 - theta2)*cos(alpha - theta1)*cos(alpha - theta2))*sin(theta1 - theta2)*cos(theta1 - theta2)/(18*cos(theta1 - theta2)**2 - 32)**2 + 36*(324*sin(alpha - theta2)*cos(alpha - theta1)*cos(theta1 - theta2) -\
+     288*sin(alpha - theta2)*cos(alpha - theta2) + 324*sin(theta1 - theta2)*cos(alpha - theta1)*cos(alpha - theta2))*sin(theta1 - theta2)*cos(theta1 - theta2)/(18*cos(theta1 - theta2)**2 - 32)**2 +\
+    (-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*sin(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**2 -\
+   (-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*cos(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**2 - \
+   72*(-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*sin(theta1 - theta2)**2*cos(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**3
+#Вторая частная производная потенциальной энергии
+def DPE_theta2_theta2(theta1, theta2):
+    return 2*omega**2*cos(theta2) + (-288*sin(alpha - theta2)**2 + 648*sin(alpha - theta2)*sin(theta1 - theta2)*cos(alpha - theta1) - 648*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) + \
+        288*cos(alpha - theta2)**2)/(18*cos(theta1 - theta2)**2 - 32) - 36*(324*sin(alpha - theta2)*cos(alpha - theta1)*cos(theta1 - theta2) - 288*sin(alpha - theta2)*cos(alpha - theta2) + \
+        324*sin(theta1 - theta2)*cos(alpha - theta1)*cos(alpha - theta2))*sin(theta1 - theta2)*cos(theta1 - theta2)/(18*cos(theta1 - theta2)**2 - 32)**2 - (11664*sin(alpha - theta2)*cos(alpha - theta1)*cos(theta1 - theta2) -\
+       10368*sin(alpha - theta2)*cos(alpha - theta2) + 11664*sin(theta1 - theta2)*cos(alpha - theta1)*cos(alpha - theta2))*sin(theta1 - theta2)*cos(theta1 - theta2)/(18*cos(theta1 - theta2)**2 - 32)**2 -\
+      (-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*sin(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**2 +\
+     (-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*cos(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**2 +\
+    72*(-11664*cos(alpha - theta1)**2 + 11664*cos(alpha - theta1)*cos(alpha - theta2)*cos(theta1 - theta2) - 5184*cos(alpha - theta2)**2)*sin(theta1 - theta2)**2*cos(theta1 - theta2)**2/(18*cos(theta1 - theta2)**2 - 32)**3
+def df(theta):
+    return np.array([[DPE_theta1_theta1(theta[0,0],theta[1,0]), DPE_theta1_theta2(theta[0,0],theta[1,0])],
+     [DPE_theta2_theta1(theta[0,0],theta[1,0]), DPE_theta2_theta2(theta[0,0],theta[1,0])]],dtype='float64')
 
-def delta_max(theta1_now , theta1_last, theta2_now, theta2_last):
-    deltamax = 1
-    delta1 = math.fabs(theta1_now - theta1_last)
-    delta2 = math.fabs(theta2_now - theta2_last)
-    if k>0:
-        deltamax = max(delta1, delta2)
-    return deltamax
+def g(x):
+    return np.array([[2*x[0,0] + 3*x[1,0] + 4*x[1,0]**2 - 5*x[1,0]**3 + 16],[-x[0,0] - 2*x[1,0] + 3*x[1,0]**2 - 7*x[1,0]**3 + 49]])
 
-theta1_now, theta2_now = (math.pi, math.pi)
-theta1_last, theta2_last = (0, 0)
-k = 0
-delta = 0.000001
-omega = 2.5
+def dg(x):
+    return np.array([[2, 3 - 8*x[1,0] - 15*x[1,0]**2],[-1, -2 + 6*x[1,0] - 21*x[1,0]**2]])
+
+
+"""
+usage:
+    f: system of non-linear equations
+    df: derivative of f
+    x0: starting guess
+    e: desired tolerance of error
+    realSolution: the exact solution of the equation
+"""
+def newtons_method(f, df, x0, e):
+    delta = np.linalg.norm(np.dot(np.linalg.inv(df(x0)),f(x0)))
+    while np.linalg.norm(delta) > e:
+        deltax = np.dot(np.linalg.inv(df(x0)),f(x0))
+        x0 = x0 - np.dot(np.linalg.inv(df(x0)),f(x0))
+        delta = np.linalg.norm(np.dot(np.linalg.inv(df(x0)),f(x0)))
+    return x0
+ 
 alpha = math.pi/4
-Theta1 =[]
-Theta2 = []
-while omega > 0:
-    while delta_max(theta1_now , theta1_last, theta2_now, theta2_last)>= delta:
-         theta1_last = theta1_now
-         theta2_last = theta2_now
-         theta1_now = Phi1(theta1_last, theta2_last)
-         theta2_now = Phi2(theta1_now,theta2_last)
-         k=k+1
+omega = 10;
+x0 = np.array([[0],[0]])
+X = np.array([0])
+Y = np.array([0])
+#Первая линия от (0,0)
+while omega >= 0:
+    x0_now = newtons_method(f, df, x0, 10**-10)  
+    X =np.append(X, x0_now[0])
+    Y = np.append(Y, x0_now[1])
+    x0 = x0_now
     omega = omega - 0.1
-    if omega == 2:
-        print("eee")
-    k=0
-    Theta1.append(theta1_now)
-    Theta2.append(theta2_now)
-plt.axis([-math.pi/2,2*math.pi/3,-math.pi/2,2*math.pi/3])
-plt.plot(Theta1,Theta2,'crimson')
+#Вторая линия из (0, Pi)
+x0 = np.array([[0],[math.pi]])
+X1 = np.array([0])
+Y1 = np.array([math.pi])
+omega = 10
+while omega >= 0:
+    x0_now = newtons_method(f, df, x0, 10**-10)  
+    X1 =np.append(X1, x0_now[0])
+    Y1 = np.append(Y1, x0_now[1])
+    x0 = x0_now
+    omega = omega - 0.1
+#Третья линия из (Pi, Pi)
+x0 = np.array([[math.pi],[math.pi]])
+X2 = np.array([math.pi])
+Y2 = np.array([math.pi])
+omega = 10
+while omega >= 0:
+    x0_now = newtons_method(f, df, x0, 10**-10)  
+    X2 =np.append(X2, x0_now[0])
+    Y2 = np.append(Y2, x0_now[1])
+    x0 = x0_now
+    omega = omega - 0.1
+#Четвертая линия из (Pi, 0)
+x0 = np.array([[math.pi],[0]])
+X3 = np.array([math.pi])
+Y3 = np.array([0])
+omega = 10
+while omega >= 0:
+    x0_now = newtons_method(f, df, x0, 10**-10)  
+    X3 =np.append(X3, x0_now[0])
+    Y3 = np.append(Y3, x0_now[1])
+    x0 = x0_now
+    omega = omega - 0.1
+plt.axis([-3,3,-3,3])
+plt.plot(X,Y,"salmon")
+plt.plot(X1,Y1,"lime")
+plt.plot(X2,Y2,"pink")
+plt.plot(X3,Y3,"blue")
 plt.grid(True)
+plt.xlabel("Theta 1"); plt.ylabel("Theta 2")
+plt.legend(['First series','Second series','3 series','4 series'], loc=2)
 plt.show()
-   
