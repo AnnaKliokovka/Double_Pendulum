@@ -9,9 +9,10 @@ about:
 import DoublePendulumPackage as DP
 import DoublePendulumPackage.SimpleLines as SL
 import DoublePendulumPackage.FindThetasOmega as FTO
+import DoublePendulumPackage.InLines as IL
 import numpy as np
 from tkinter import *
 import math
 #SL.calculate(math.pi/4)
 #SL.plot_result()
-FTO.calculate(math.pi/4)
+IL.calculate(math.pi/4)
