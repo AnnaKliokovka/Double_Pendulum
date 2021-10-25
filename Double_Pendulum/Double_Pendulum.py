@@ -18,10 +18,9 @@ import math
 print("        A pi")
 print("alpha = ----")
 print("          B ")
-A = int(input("Введите числитель: "))
-B = int(input("Введите значенатель: "))
-alpha = A*math.pi/B
+A = int(input("Введите угол альфа: "))
+alpha = A*math.pi/180
 #FTO.calculate(alpha, alpha - 0.5 *math.pi, alpha + 0.5 *math.pi, 1.6 )
 #FTO.calculate(alpha, -0.5, 2.27, 1.7 )
 #SL.calculate(alpha )
-IL.calculate(A* math.pi/(B))
+IL.calculate(alpha)

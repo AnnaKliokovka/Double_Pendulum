@@ -110,7 +110,7 @@ def newtons_method(f, df, x0, e):
     k=0
     xo = x0;
     delta = np.linalg.norm(np.dot(np.linalg.inv(df(x0)),f(x0)))
-    while np.linalg.norm(delta) > e and k<120:
+    while np.linalg.norm(delta) > e and k<10:
         deltax = np.dot(np.linalg.inv(df(x0)),f(x0))
         x0 = x0 - np.dot(np.linalg.inv(df(x0)),f(x0))
         delta = np.linalg.norm(np.dot(np.linalg.inv(df(x0)),f(x0)))
@@ -143,9 +143,6 @@ def calculate(alpha_in, theta10, theta20, Omega0):
     global  alpha
     alpha = alpha_in
     x0 = np.array([[theta10],[theta20],[Omega0]])
-    x01 = np.array([theta10,theta20,Omega0])
-    root = opt.fsolve(f1, [1.5, 2.88, 0.96])
-    root2 = opt.fsolve(f2, x01)
     x0_now = newtons_method(f, df, x0 ,10**-5)
     return x0_now
 
