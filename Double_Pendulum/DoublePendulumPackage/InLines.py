@@ -1,3 +1,4 @@
+import DoublePendulumPackage.FindThetasOmega as FTO
 import numpy as np
 import matplotlib.pyplot as plt
 from sympy import diff, symbols, cos, sin
@@ -6,8 +7,8 @@ import math
 # Global values - 
 alpha=0 
 # Глобальные переменные 
-X = [[],[],[],[],[],[],[],[],[],[],[],[]]
-Y = [[],[],[],[],[],[],[],[],[],[],[],[]]
+X = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+Y = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
 def f(theta):
         DPE_theta1 =6*omega**2*sin(theta[0,0]) + (-648*sin(alpha - theta[0,0])*cos(alpha - theta[0,0]) + 324*sin(alpha - theta[0,0])*cos(alpha - theta[1,0])*cos(theta[0,0] - theta[1,0]) - \
             324*sin(theta[0,0] - theta[1,0])*cos(alpha - theta[0,0])*cos(alpha - theta[1,0]))/(18*cos(theta[0,0] - theta[1,0])**2 - 32) + 36*(-324*cos(alpha - theta[0,0])**2 + \
@@ -104,52 +105,37 @@ def newtons_method(f, df, x0, e):
 def calculate(alpha_in):
     global X, Y,alpha, omega
     alpha = alpha_in
-    omega = 0.1
-    x0 = np.array([[alpha - 0.5*math.pi],[alpha ]])
-    minor = 10
-#Первая линия от (0,0)
-    while omega<= 10:
-          x0_now = newtons_method(f, df, x0, 10**-10) 
-          if x0_now is not None:
-              X = np.append(X, x0_now[0])
-              Y = np.append(Y, x0_now[1])
-              x0 = x0_now
-              omega = omega + 0.1
-          else:
-              break
-#Вторая линия из (0, Pi)
-    plot_result()
-    x0 = np.array([[0],[math.pi]])
-    omega = 10
-    while omega >= 0:
-          x0_now = newtons_method(f, df, x0, 10**-10)  
-          X1 =np.append(X1, x0_now[0])
-          Y1 = np.append(Y1, x0_now[1])
-          x0 = x0_now
-          omega = omega - 0.1
-#Третья линия из (Pi, Pi)
-    x0 = np.array([[math.pi],[math.pi]])
-    omega = 10
-    while omega >= 0:
-          x0_now = newtons_method(f, df, x0, 10**-10)  
-          X2 =np.append(X2, x0_now[0])
-          Y2 = np.append(Y2, x0_now[1])
-          x0 = x0_now
-          omega = omega - 0.1
-#Четвертая линия из (Pi, 0)
-    x0 = np.array([[math.pi],[0]])
-    omega = 10
-    while omega >= 0:
-          x0_now = newtons_method(f, df, x0, 10**-10)  
-          X3 =np.append(X3, x0_now[0])
-          Y3 = np.append(Y3, x0_now[1])
-          x0 = x0_now
-          omega = omega - 0.1
-def plot_result():
-    plt.axis([-1,4,-1,4.2])
-    plt.plot(X,Y,"salmon")
-    plt.grid(True)
+    deltaOmega = 0.05
+    i_now =0
+    for i in [0,1]:
+        for j in [2]:
+            omega = 0.01
+            x0 = np.array([[alpha + i*0.5*math.pi],[alpha + j*0.5*math.pi]])
+            while omega <= 10:
+                  x0_now = newtons_method(f, df, x0, 10**-10) 
+                  if x0_now is not None :
+                         x_check = np.array([[x0_now[0] - x0[0]],[x0_now[1] - x0[1]]])
+                  if x0_now is not None and (max(x_check) < 0.4 ):
+                         X[i_now] = np.append(X[i_now], x0_now[0])
+                         Y[i_now] = np.append(Y[i_now], x0_now[1])
+                         x0 = x0_now
+                         omega = omega + deltaOmega
+                  else:
+                      x_star = FTO.calculate(alpha, X[i_now][len(X[i_now])-1], Y[i_now][len(Y[i_now])-1],omega)
+                      X[i_now] = np.append(X[i_now], x_star[0])
+                      Y[i_now] = np.append(Y[i_now], x_star[1])
+                      break        
+            i_now = i_now+1
+    plot_result(i_now)
+
+def plot_result(CountLines):
+    plt.axis([-1,6,-1,6])
+    for i in range(CountLines):
+        plt.plot(X[i],Y[i])    
+    plt.grid(True,linestyle = '--')
     plt.xlabel("Theta 1"); plt.ylabel("Theta 2")
+    plt.xticks([alpha - 0.5*math.pi,0,alpha, alpha+ 0.5*math.pi, math.pi, alpha+math.pi]) 
+    plt.yticks([alpha - 0.5*math.pi,0,alpha, alpha+ 0.5*math.pi, math.pi, alpha+math.pi])
     plt.show()
 
 

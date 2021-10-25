@@ -97,7 +97,7 @@ def calculate(alpha_in):
     x0 = np.array([[0],[0]])
 #Первая линия от (0,0)
     while omega >= 0:
-          x0_now = newtons_method(f, df, x0, 10**-10)  
+          x0_now = newtons_method(f, df, x0, 10**-10) 
           X = np.append(X, x0_now[0])
           Y = np.append(Y, x0_now[1])
           x0 = x0_now
@@ -129,15 +129,16 @@ def calculate(alpha_in):
           Y3 = np.append(Y3, x0_now[1])
           x0 = x0_now
           omega = omega - 0.1
+    plot_result()
 def plot_result():
-    plt.axis([-1,4,-1,4.2])
     plt.plot(X,Y,"salmon")
     plt.plot(X1,Y1,"lime")
     plt.plot(X2,Y2,"pink")
     plt.plot(X3,Y3,"blue")
-    plt.grid(True)
+    plt.grid(True,linestyle = '--')
     plt.xlabel("Theta 1"); plt.ylabel("Theta 2")
-    plt.legend(['First series','Second series','3 series','4 series'], loc=2)
+    plt.xticks([alpha - 0.5*math.pi,0,alpha, alpha+ 0.5*math.pi, math.pi, alpha+math.pi]) 
+    plt.yticks([alpha - 0.5*math.pi,0,alpha, alpha+ 0.5*math.pi, math.pi, alpha+math.pi])
     plt.show()
 
 
