@@ -122,17 +122,21 @@ def calculate(alpha_in):
                          x0 = x0_now
                          omega = omega + deltaOmega
                   else:
-                      #x_star = FTO.calculate(alpha, X[i_now][len(X[i_now])-1], Y[i_now][len(Y[i_now])-1],omega)
-                      #X[i_now] = np.append(X[i_now], x_star[0])
-                      #Y[i_now] = np.append(Y[i_now], x_star[1])
+                      x_star = FTO.calculate(alpha, X[i_now][len(X[i_now])-1], Y[i_now][len(Y[i_now])-1],omega)
+                      if (x_star[0] == X[i_now][len(X[i_now])-1] and x_star[1] == Y[i_now][len(Y[i_now])-1] and max(x_check) <= 0.55):
+                          X[i_now] = np.append(X[i_now], x0_now[0])
+                          Y[i_now] = np.append(Y[i_now], x0_now[1])
+                      else:
+                          X[i_now] = np.append(X[i_now], x_star[0])
+                          Y[i_now] = np.append(Y[i_now], x_star[1])
                       break        
             i_now = i_now+1
     plot_result(i_now)
 
 def plot_result(CountLines):
-    plt.axis([-math.pi/2 ,3*math.pi/2,-math.pi/2 ,3*math.pi/2])
+    plt.axis([-math.pi/2 - 0.2 ,3*math.pi/2 + 0.2,-math.pi/2 - 0.2 ,3*math.pi/2 + 0.2])
     for i in range(CountLines):
-        plt.plot(X[i],Y[i])    
+        plt.plot(X[i],Y[i],'black',linewidth='0.5')    
     plt.grid(True,linestyle = '--')
     plt.xlabel("Theta 1"); plt.ylabel("Theta 2")
     plt.xticks([alpha - 0.5*math.pi,0,alpha, alpha+ 0.5*math.pi, math.pi, alpha+math.pi]) 
