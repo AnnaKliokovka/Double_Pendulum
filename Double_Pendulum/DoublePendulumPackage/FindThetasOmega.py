@@ -143,12 +143,13 @@ def calculate(alpha_in, theta10, theta20, Omega0):
     global  alpha
     alpha = alpha_in
     x0 = np.array([[theta10],[theta20],[Omega0]])
-    #x0_now = newtons_method(f, df, x0 ,10**-5)
+    x0_n = newtons_method(f, df, x0 ,10**-5)
     root = opt.fsolve(f2, x0, full_output = 1) 
-    x0_now =np.array([root[0][0],root[0][1]])
-    x_check = np.array([[x0_now[0] - x0[0]],[x0_now[1] - x0[1]]])
+    x0_now =np.array([root[0][0],root[0][1],root[0][2]])
+    x0_ans =np.array([root[0][0],root[0][1]])
+    x_check = np.array([[x0_now[0] - x0[0]],[x0_now[1] - x0[1]],[x0_now[2]-x0[2]]])
     if max(x_check) < 0.4 and root[2] == 1 :
-        return x0_now
+        return x0_ans
     else:
         return x0
 

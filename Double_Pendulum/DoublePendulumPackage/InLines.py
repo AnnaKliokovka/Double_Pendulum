@@ -105,12 +105,14 @@ def newtons_method(f, df, x0, e):
  
 def calculate(alpha_in):
     global X, Y,alpha, omega
+    X = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+    Y = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     alpha = alpha_in
     deltaOmega = 0.05
     i_now =0
     for i in [-1,0,1,2]:
         for j in [-1,0,1,2]:
-            omega = 0.01
+            omega = 0.001
             x0 = np.array([alpha + i*0.5*math.pi,alpha + j*0.5*math.pi])
             while omega <= 10:
                   root = opt.fsolve(f, x0, full_output = 1) 
@@ -134,14 +136,18 @@ def calculate(alpha_in):
     plot_result(i_now)
 
 def plot_result(CountLines):
+    plt.figure(figsize=(8,6))
     plt.axis([-math.pi/2 - 0.2 ,3*math.pi/2 + 0.2,-math.pi/2 - 0.2 ,3*math.pi/2 + 0.2])
     for i in range(CountLines):
-        plt.plot(X[i],Y[i],'black',linewidth='0.5')    
+        plt.plot(X[i],Y[i],'black',linewidth='0.8')    
     plt.grid(True,linestyle = '--')
-    plt.xlabel("Theta 1"); plt.ylabel("Theta 2")
+    plt.xlabel('theta 1')
+    plt.ylabel('theta 2')
     plt.xticks([alpha - 0.5*math.pi,0,alpha, alpha+ 0.5*math.pi, math.pi, alpha+math.pi]) 
     plt.yticks([alpha - 0.5*math.pi,0,alpha, alpha+ 0.5*math.pi, math.pi, alpha+math.pi])
-    plt.show()
+    a = alpha*180/math.pi
+    plt.title('Положения равновесия при альфа = %f ' % a)    
+    plt.savefig('foo.png')
 
 
 
