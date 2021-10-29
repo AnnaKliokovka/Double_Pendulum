@@ -15,14 +15,11 @@ import random
 from tkinter import *
 import math
 #A = int(input("Введите угол альфа: "))
-#alpha = A*math.pi/180
-i=0
-while i < 5:
-    A = random.randint(0,90)
+A = 0
+step = 45
+while A < 90 :
+    A = A + step
     alpha = A*math.pi/180
-    print('Вычисляется угол %i' % A)
-#FTO.calculate(alpha, alpha - 0.5 *math.pi, alpha + 0.5 *math.pi, 1.6 )
-#FTO.calculate(alpha, -0.5, 2.27, 1.7 )
-#SL.calculate(alpha )
     IL.calculate(alpha)
-    i=i+1
+    print('Посчитан угол %i' % A)
+print('Вычисления выполнены!')

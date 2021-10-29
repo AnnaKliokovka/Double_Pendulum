@@ -131,15 +131,18 @@ def calculate(alpha_in):
                       else:
                           X[i_now] = np.append(X[i_now], x_star[0])
                           Y[i_now] = np.append(Y[i_now], x_star[1])
-                      break        
+                          break        
             i_now = i_now+1
     plot_result(i_now)
 
 def plot_result(CountLines):
     plt.figure(figsize=(8,6))
-    plt.axis([-math.pi/2 - 0.2 ,3*math.pi/2 + 0.2,-math.pi/2 - 0.2 ,3*math.pi/2 + 0.2])
+    plt.axis([-math.pi/2 - 0.05 ,3*math.pi/2 + 0.2,-math.pi/2 - 0.2 ,3*math.pi/2 + 0.2])
     for i in range(CountLines):
-        plt.plot(X[i],Y[i],'black',linewidth='0.8')    
+        j = i+1
+        plt.text(X[i][2] - 0.2,Y[i][2]+0.1,'%i' % j)
+        plt.plot(X[i],Y[i],'black',linewidth='0.8')        
+        plt.plot(X[i][0],Y[i][0],'ko')
     plt.grid(True,linestyle = '--')
     plt.xlabel('theta 1')
     plt.ylabel('theta 2')
@@ -147,7 +150,7 @@ def plot_result(CountLines):
     plt.yticks([alpha - 0.5*math.pi,0,alpha, alpha+ 0.5*math.pi, math.pi, alpha+math.pi])
     a = alpha*180/math.pi
     plt.title('Положения равновесия при альфа = %f ' % a)    
-    plt.savefig('foo.png')
+    plt.savefig('%i.png' % a)
 
 
 
