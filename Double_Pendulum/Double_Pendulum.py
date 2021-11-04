@@ -6,17 +6,14 @@ about:
     non-linear equations. as an example we use two different non-linear
     systems. at the end you'll see a work-accuracy plot for both systems.
 """
-import DoublePendulumPackage as DP
-import DoublePendulumPackage.SimpleLines as SL
-import DoublePendulumPackage.FindThetasOmega as FTO
 import DoublePendulumPackage.InLines as IL
 import numpy as np
 import random
 from tkinter import *
 import math
 #A = int(input("Введите угол альфа: "))
-A = 0
-step = 45
+A = 32
+step = 1
 while A < 90 :
     A = A + step
     alpha = A*math.pi/180
