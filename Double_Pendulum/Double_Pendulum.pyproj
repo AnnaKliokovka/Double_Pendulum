@@ -21,7 +21,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DoublePendulumPackage\CheckConvergence.py">
+    <Compile Include="DoublePendulumPackage\AlphaOmega.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DoublePendulumPackage\CheckStability.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DoublePendulumPackage\FindThetasOmega.py">

@@ -143,7 +143,6 @@ def calculate(alpha_in, theta10, theta20, Omega0):
     global  alpha
     alpha = alpha_in
     x0 = np.array([[theta10],[theta20],[Omega0]])
-    x0_n = newtons_method(f, df, x0 ,10**-5)
     root = opt.fsolve(f2, x0, full_output = 1) 
     x0_now =np.array([root[0][0],root[0][1],root[0][2]])
     x0_ans =np.array([root[0][0],root[0][1]])
